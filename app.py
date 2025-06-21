@@ -8,7 +8,7 @@ st.set_page_config(layout="wide")
 # --- Password Protection ---
 st.markdown("<h2 style='text-align: center;'>🔐 Secure Access</h2>", unsafe_allow_html=True)
 password = st.text_input("Enter password to access the dashboard:", type="password")
-if password != "road2025":
+if password != "msba":
     st.warning("🔒 Please enter the correct password to continue.")
     st.stop()
 
