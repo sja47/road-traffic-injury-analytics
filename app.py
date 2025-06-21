@@ -10,8 +10,8 @@ if password != PASSWORD:
     st.warning("Access Denied.")
     st.stop()
 
-# --- LOAD CSV FROM GITHUB ---
-csv_url = "https://raw.githubusercontent.com/your-username/your-repo/main/road_traffic_data.csv"  # <- change this
+# --- LOAD DATA ---
+csv_url = "https://raw.githubusercontent.com/your-username/your-repo/main/road_traffic_data.csv"  # Replace with your actual GitHub CSV URL
 try:
     df = pd.read_csv(csv_url)
 except Exception as e:
