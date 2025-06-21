@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "YourSecurePassword":  # ← Change this
+        if st.session_state["password"] == "MSBA":
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
@@ -23,22 +23,20 @@ def check_password():
 check_password()
 
 # ---------------------------
-# CSV UPLOAD
+# LOAD DATA DIRECTLY FROM GITHUB
 # ---------------------------
-uploaded_file = st.file_uploader("📂 Upload your CSV file", type="csv")
-if uploaded_file is None:
-    st.warning("Please upload a CSV file.")
+CSV_URL = "https://raw.githubusercontent.com/YOUR_USERNAME/road-traffic-injury-analytics/main/road_traffic_injuries_sample.csv"
+
+try:
+    df = pd.read_csv(CSV_URL)
+except Exception as e:
+    st.error(f"❌ Failed to load data. Please check the CSV URL.\n\n{e}")
     st.stop()
 
 # ---------------------------
-# TITLE BELOW UPLOAD
+# TITLE BELOW SOURCE
 # ---------------------------
 st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-
-# ---------------------------
-# READ DATA
-# ---------------------------
-df = pd.read_csv(uploaded_file)
 
 # ---------------------------
 # DATA PREP
