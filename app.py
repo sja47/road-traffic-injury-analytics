@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "YourSecurePassword":  # ← change this
+        if st.session_state["password"] == "MSBA":  # ← Change this
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
@@ -38,16 +38,8 @@ if uploaded_file is None:
 df = pd.read_csv(uploaded_file)
 
 # ---------------------------
-# DATA OVERVIEW
+# ANALYTICS PREP
 # ---------------------------
-st.header("1. Dataset Preview")
-st.dataframe(df.head(), use_container_width=True)
-
-# ---------------------------
-# VISUALIZATIONS IN 2x2 GRID
-# ---------------------------
-
-# -- PREP
 gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 vehicle_counts = df["Vehicle_Type"].value_counts()
@@ -57,14 +49,14 @@ age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "In
 row1_col1, row1_col2 = st.columns(2)
 
 with row1_col1:
-    st.subheader("2. Avg Rates by Gender")
+    st.subheader("1. Avg Rates by Gender")
     fig1, ax1 = plt.subplots(figsize=(5, 4))
     gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "blue"])
     ax1.set_ylabel("Rate per 100k")
     st.pyplot(fig1, use_container_width=True)
 
 with row1_col2:
-    st.subheader("3. Yearly Trends")
+    st.subheader("2. Yearly Trends")
     fig2, ax2 = plt.subplots(figsize=(5, 4))
     ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', label="Death Rate")
     ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label="Injury Rate")
@@ -76,21 +68,26 @@ with row1_col2:
 row2_col1, row2_col2 = st.columns(2)
 
 with row2_col1:
-    st.subheader("4. Vehicle Type Distribution")
+    st.subheader("3. Vehicle Type Distribution")
     fig3, ax3 = plt.subplots(figsize=(5, 4))
     ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90)
     ax3.axis('equal')
     st.pyplot(fig3, use_container_width=True)
 
 with row2_col2:
-    st.subheader("5. Age × Gender Rates")
+    st.subheader("4. Age × Gender Rates")
     fig4, ax4 = plt.subplots(figsize=(5, 4))
     age_gender_avg.plot(kind="bar", ax=ax4)
     ax4.set_ylabel("Rate per 100k")
     st.pyplot(fig4, use_container_width=True)
 
 # ---------------------------
-# FOOTER
+# HIDE STREAMLIT DEFAULT UI
 # ---------------------------
-st.markdown("---")
-st.markdown("© 2025 | Road Safety Analytics | MSBA Healthcare Analytics")
+hide_streamlit_style = """
+        <style>
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        </style>
+        """
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
