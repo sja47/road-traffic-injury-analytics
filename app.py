@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "MSBA":  # ← Change this
+        if st.session_state["password"] == "YourSecurePassword":  # ← Change to your actual password
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
@@ -23,12 +23,7 @@ def check_password():
 check_password()
 
 # ---------------------------
-# TITLE
-# ---------------------------
-st.title("🚦 Road Traffic Injury Analytics Dashboard")
-
-# ---------------------------
-# CSV UPLOAD
+# FILE UPLOAD
 # ---------------------------
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type="csv")
 if uploaded_file is None:
@@ -38,7 +33,12 @@ if uploaded_file is None:
 df = pd.read_csv(uploaded_file)
 
 # ---------------------------
-# ANALYTICS PREP
+# TITLE (Moved Below Upload)
+# ---------------------------
+st.title("🚦 Road Traffic Injury Analytics Dashboard")
+
+# ---------------------------
+# VISUALIZATION DATA PREP
 # ---------------------------
 gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
@@ -82,12 +82,7 @@ with row2_col2:
     st.pyplot(fig4, use_container_width=True)
 
 # ---------------------------
-# HIDE STREAMLIT DEFAULT UI
+# FOOTER
 # ---------------------------
-hide_streamlit_style = """
-        <style>
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        </style>
-        """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown("---")
+st.markdown("© 2025 | Road Safety Analytics | MSBA Healthcare Analytics")
