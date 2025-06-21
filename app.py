@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "MSBA":  # ← Change to your password
+        if st.session_state["password"] == "YourSecurePassword":  # ← Change this
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
@@ -23,11 +23,6 @@ def check_password():
 check_password()
 
 # ---------------------------
-# TITLE
-# ---------------------------
-st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-
-# ---------------------------
 # CSV UPLOAD
 # ---------------------------
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type="csv")
@@ -35,6 +30,14 @@ if uploaded_file is None:
     st.warning("Please upload a CSV file.")
     st.stop()
 
+# ---------------------------
+# TITLE BELOW UPLOAD
+# ---------------------------
+st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
+
+# ---------------------------
+# READ DATA
+# ---------------------------
 df = pd.read_csv(uploaded_file)
 
 # ---------------------------
@@ -63,7 +66,7 @@ with row1_col2:
     ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label="Injury Rate", color="#66B3FF")
     ax2.set_ylabel("Rate per 100k")
     ax2.set_xlabel("Year")
-    ax2.legend(loc="upper center")
+    ax2.legend(loc="upper right", frameon=False)
     st.pyplot(fig2, use_container_width=True)
 
 # ------------------ ROW 2 -------------------
