@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "MSBA":
+        if st.session_state["password"] == "msba":
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
