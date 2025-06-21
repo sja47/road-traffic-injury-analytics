@@ -1,77 +1,79 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
+# --- AUTHENTICATION ---
 st.set_page_config(layout="wide")
-
-# --- Password Protection ---
-st.markdown("<h2 style='text-align: center;'>🔐 Secure Access</h2>", unsafe_allow_html=True)
-password = st.text_input("Enter password to access the dashboard:", type="password")
-if password != "msba":
-    st.warning("🔒 Please enter the correct password to continue.")
+PASSWORD = "msba"
+password = st.text_input("Enter password:", type="password")
+if password != PASSWORD:
+    st.warning("Access Denied.")
     st.stop()
 
-# --- Title ---
-st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-
-# --- Load Data ---
-CSV_URL = "https://raw.githubusercontent.com/sja47/road-traffic-injury-analytics/main/road_traffic_injuries_sample.csv"
+# --- LOAD DATA FROM GITHUB ---
+csv_url = "https://raw.githubusercontent.com/your-username/your-repo/main/road_traffic_data.csv"  # replace this
 try:
-    df = pd.read_csv(CSV_URL)
+    df = pd.read_csv(csv_url)
 except Exception as e:
-    st.error(f"❌ Failed to load data. Please check the CSV URL.\n\n{e}")
+    st.error(f"❌ Failed to load data. Error: {e}")
     st.stop()
 
-# --- Layout Grid 2x2 ---
-row1_col1, row1_col2 = st.columns(2)
-row2_col1, row2_col2 = st.columns(2)
+st.title("📊 Road Traffic Injury & Death Analysis (WHO)")
 
-# --- 1. Avg by Gender ---
-with row1_col1:
-    st.subheader("1. Avg Death & Injury Rates by Gender")
-    gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean()
-    fig1, ax1 = plt.subplots(figsize=(3, 2))
-    gender_avg.plot(kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"], legend=False)
-    ax1.set_ylabel("Rate per 100k", fontsize=8)
-    ax1.set_xlabel("Gender", fontsize=8)
-    ax1.tick_params(axis='both', labelsize=7)
-    fig1.tight_layout()
-    st.pyplot(fig1, use_container_width=True)
+# --- 4 VISUALIZATIONS IN A 2x2 GRID ---
+col1, col2 = st.columns(2)
 
-# --- 2. Yearly Trends ---
-with row1_col2:
-    st.subheader("2. Yearly Trends in Death & Injury Rates")
-    yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
-    fig2, ax2 = plt.subplots(figsize=(3, 2))
-    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='red', label="Death Rate")
-    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='blue', label="Injury Rate")
-    ax2.set_ylabel("Rate per 100k", fontsize=8)
-    ax2.set_xlabel("Year", fontsize=8)
-    ax2.tick_params(axis='both', labelsize=7)
-    ax2.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fontsize=7)
-    fig2.tight_layout()
-    st.pyplot(fig2, use_container_width=True)
+# --- Chart 1: Avg Death & Injury Rates by Gender ---
+with col1:
+    st.markdown("### 1. Avg Death & Injury Rates by Gender")
+    gender_group = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean()
+    fig1, ax1 = plt.subplots(figsize=(4, 3))
+    gender_group.plot(kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"])
+    ax1.set_ylabel("Rate per 100k")
+    ax1.set_xlabel("Gender")
+    ax1.legend(["Injury", "Death"], loc="upper right")
+    st.pyplot(fig1)
 
-# --- 3. Vehicle Types ---
-with row2_col1:
-    st.subheader("3. Vehicle Type Distribution")
+# --- Chart 2: Trends over Years ---
+with col2:
+    st.markdown("### 2. Yearly Trends in Death & Injury Rates")
+    year_group = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean()
+    fig2, ax2 = plt.subplots(figsize=(4, 3))
+    ax2.plot(year_group.index, year_group["Death_Rate_per_100k"], label="Death Rate", color="red", marker="o")
+    ax2.plot(year_group.index, year_group["Injury_Rate_per_100k"], label="Injury Rate", color="blue", marker="o")
+    ax2.set_ylabel("Rate per 100k")
+    ax2.set_xlabel("Year")
+    ax2.legend(loc="upper right")
+    st.pyplot(fig2)
+
+col3, col4 = st.columns(2)
+
+# --- Chart 3: Vehicle Type Distribution ---
+with col3:
+    st.markdown("### 3. Vehicle Type Distribution")
     vehicle_counts = df["Vehicle_Type"].value_counts()
-    fig3, ax3 = plt.subplots(figsize=(3, 2))
-    vehicle_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax3, colors=sns.color_palette("pastel"), textprops={'fontsize': 7})
-    ax3.set_ylabel("")
-    fig3.tight_layout()
-    st.pyplot(fig3, use_container_width=True)
+    fig3, ax3 = plt.subplots(figsize=(4, 3))
+    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=140)
+    ax3.axis("equal")
+    st.pyplot(fig3)
 
-# --- 4. Age × Gender ---
-with row2_col2:
-    st.subheader("4. Death & Injury Rates by Age × Gender")
-    age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
-    fig4, ax4 = plt.subplots(figsize=(3, 2))
-    age_gender_avg.plot(kind="bar", ax=ax4, width=0.8, color=["red", "green", "skyblue", "orange"])
-    ax4.set_ylabel("Rate per 100k", fontsize=8)
-    ax4.set_xlabel("Age Group", fontsize=8)
-    ax4.tick_params(axis='both', labelsize=7)
-    ax4.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False, fontsize=7)
-    fig4.tight_layout()
-    st.pyplot(fig4, use_container_width=True)
+# --- Chart 4: Age × Gender Death & Injury ---
+with col4:
+    st.markdown("### 4. Death & Injury Rates by Age × Gender")
+    grouped = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
+    fig4, ax4 = plt.subplots(figsize=(4, 3))
+    age_labels = grouped.index
+    width = 0.2
+    x = range(len(age_labels))
+    
+    ax4.bar([i - 1.5*width for i in x], grouped["Death_Rate_per_100k"]["Female"], width=width, label="Death Rate (F)", color='red')
+    ax4.bar([i - 0.5*width for i in x], grouped["Death_Rate_per_100k"]["Male"], width=width, label="Death Rate (M)", color='green')
+    ax4.bar([i + 0.5*width for i in x], grouped["Injury_Rate_per_100k"]["Female"], width=width, label="Injury Rate (F)", color='skyblue')
+    ax4.bar([i + 1.5*width for i in x], grouped["Injury_Rate_per_100k"]["Male"], width=width, label="Injury Rate (M)", color='orange')
+
+    ax4.set_xticks(list(x))
+    ax4.set_xticklabels(age_labels, rotation=45, ha="right")
+    ax4.set_ylabel("Rate per 100k")
+    ax4.legend(loc="center left", bbox_to_anchor=(1, 0.5))
+    st.pyplot(fig4)
+
