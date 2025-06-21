@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "YourSecurePassword":  # ← Change to your actual password
+        if st.session_state["password"] == "MSBA":  # ← Change to your password
             st.session_state["authenticated"] = True
         else:
             st.error("❌ Wrong password")
@@ -23,7 +23,12 @@ def check_password():
 check_password()
 
 # ---------------------------
-# FILE UPLOAD
+# TITLE
+# ---------------------------
+st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
+
+# ---------------------------
+# CSV UPLOAD
 # ---------------------------
 uploaded_file = st.file_uploader("📂 Upload your CSV file", type="csv")
 if uploaded_file is None:
@@ -33,12 +38,7 @@ if uploaded_file is None:
 df = pd.read_csv(uploaded_file)
 
 # ---------------------------
-# TITLE (Moved Below Upload)
-# ---------------------------
-st.title("🚦 Road Traffic Injury Analytics Dashboard")
-
-# ---------------------------
-# VISUALIZATION DATA PREP
+# DATA PREP
 # ---------------------------
 gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
@@ -49,36 +49,40 @@ age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "In
 row1_col1, row1_col2 = st.columns(2)
 
 with row1_col1:
-    st.subheader("1. Avg Rates by Gender")
+    st.markdown("### 1. Avg Death & Injury Rates by Gender")
     fig1, ax1 = plt.subplots(figsize=(5, 4))
-    gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "blue"])
+    gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["#A6CEE3", "#1F78B4"], legend=False)
     ax1.set_ylabel("Rate per 100k")
+    ax1.set_xlabel("")
     st.pyplot(fig1, use_container_width=True)
 
 with row1_col2:
-    st.subheader("2. Yearly Trends")
+    st.markdown("### 2. Yearly Trends in Death & Injury Rates")
     fig2, ax2 = plt.subplots(figsize=(5, 4))
-    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', label="Death Rate")
-    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label="Injury Rate")
-    ax2.legend()
+    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', label="Death Rate", color="#FF9999")
+    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label="Injury Rate", color="#66B3FF")
     ax2.set_ylabel("Rate per 100k")
+    ax2.set_xlabel("Year")
+    ax2.legend(loc="upper center")
     st.pyplot(fig2, use_container_width=True)
 
 # ------------------ ROW 2 -------------------
 row2_col1, row2_col2 = st.columns(2)
 
 with row2_col1:
-    st.subheader("3. Vehicle Type Distribution")
+    st.markdown("### 3. Vehicle Type Distribution")
     fig3, ax3 = plt.subplots(figsize=(5, 4))
-    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90)
+    colors = ["#FDBF6F", "#CAB2D6", "#B2DF8A", "#FB9A99", "#FFED6F"]
+    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, colors=colors)
     ax3.axis('equal')
     st.pyplot(fig3, use_container_width=True)
 
 with row2_col2:
-    st.subheader("4. Age × Gender Rates")
+    st.markdown("### 4. Death & Injury Rates by Age Group and Gender")
     fig4, ax4 = plt.subplots(figsize=(5, 4))
-    age_gender_avg.plot(kind="bar", ax=ax4)
+    age_gender_avg.plot(kind="bar", ax=ax4, width=0.75, rot=0, colormap="Set1", legend=False)
     ax4.set_ylabel("Rate per 100k")
+    ax4.set_xlabel("Age Group")
     st.pyplot(fig4, use_container_width=True)
 
 # ---------------------------
