@@ -1,100 +1,96 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# ------------------------------------------
+# ---------------------------
 # PASSWORD PROTECTION
-# ------------------------------------------
+# ---------------------------
 def check_password():
     def password_entered():
-        if st.session_state["password"] == "MSBA":  # ← CHANGE THIS
+        if st.session_state["password"] == "MSBA":  # ← change this
             st.session_state["authenticated"] = True
         else:
-            st.error("❌ Incorrect password")
+            st.error("❌ Wrong password")
             st.session_state["authenticated"] = False
 
     if "authenticated" not in st.session_state:
         st.session_state["authenticated"] = False
 
     if not st.session_state["authenticated"]:
-        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        st.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
         st.stop()
 
 check_password()
 
-# ------------------------------------------
-# APP TITLE
-# ------------------------------------------
+# ---------------------------
+# TITLE
+# ---------------------------
 st.title("🚦 Road Traffic Injury Analytics Dashboard")
 
-# ------------------------------------------
+# ---------------------------
 # CSV UPLOAD
-# ------------------------------------------
-uploaded_file = st.file_uploader("📂 Upload your CSV file", type=["csv"])
+# ---------------------------
+uploaded_file = st.file_uploader("📂 Upload your CSV file", type="csv")
 if uploaded_file is None:
-    st.warning("Please upload a CSV file to proceed.")
+    st.warning("Please upload a CSV file.")
     st.stop()
 
 df = pd.read_csv(uploaded_file)
 
-# ------------------------------------------
+# ---------------------------
 # DATA OVERVIEW
-# ------------------------------------------
-st.header("1. Dataset Overview")
-st.dataframe(df.head())
+# ---------------------------
+st.header("1. Dataset Preview")
+st.dataframe(df.head(), use_container_width=True)
 
-# ------------------------------------------
-# VISUALS LAYOUT
-# ------------------------------------------
-col1, col2 = st.columns(2)
+# ---------------------------
+# VISUALIZATIONS IN 2x2 GRID
+# ---------------------------
 
-# -- 1. Average Death & Injury Rates by Gender
-with col1:
-    st.subheader("2. Avg Death & Injury by Gender")
-    gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
+# -- PREP
+gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
+yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
+vehicle_counts = df["Vehicle_Type"].value_counts()
+age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
-    fig1, ax1 = plt.subplots()
+# ------------------ ROW 1 -------------------
+row1_col1, row1_col2 = st.columns(2)
+
+with row1_col1:
+    st.subheader("2. Avg Rates by Gender")
+    fig1, ax1 = plt.subplots(figsize=(5, 4))
     gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "blue"])
-    ax1.set_ylabel("Rate per 100,000")
-    ax1.set_title("Avg Death & Injury Rates by Gender")
-    st.pyplot(fig1)
+    ax1.set_ylabel("Rate per 100k")
+    st.pyplot(fig1, use_container_width=True)
 
-# -- 2. Yearly Trends in Death & Injury Rates
-with col2:
-    st.subheader("3. Yearly Trends in Death & Injury")
-    yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
-
-    fig2, ax2 = plt.subplots()
-    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', label='Death Rate')
-    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label='Injury Rate')
-    ax2.set_ylabel("Rate per 100,000")
-    ax2.set_title("Yearly Death & Injury Trends")
+with row1_col2:
+    st.subheader("3. Yearly Trends")
+    fig2, ax2 = plt.subplots(figsize=(5, 4))
+    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', label="Death Rate")
+    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', label="Injury Rate")
     ax2.legend()
-    st.pyplot(fig2)
+    ax2.set_ylabel("Rate per 100k")
+    st.pyplot(fig2, use_container_width=True)
 
-# -- 3. Distribution by Vehicle Type
-with col1:
-    st.subheader("4. Distribution by Vehicle Type")
-    vehicle_counts = df["Vehicle_Type"].value_counts()
+# ------------------ ROW 2 -------------------
+row2_col1, row2_col2 = st.columns(2)
 
-    fig3, ax3 = plt.subplots()
-    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct="%1.1f%%", startangle=140)
-    ax3.set_title("Vehicle Type Distribution")
-    st.pyplot(fig3)
+with row2_col1:
+    st.subheader("4. Vehicle Type Distribution")
+    fig3, ax3 = plt.subplots(figsize=(5, 4))
+    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90)
+    ax3.axis('equal')
+    st.pyplot(fig3, use_container_width=True)
 
-# -- 4. Avg Rates by Age Group & Gender
-with col2:
-    st.subheader("5. Avg Death & Injury by Age Group & Gender")
-    age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
-
-    fig4, ax4 = plt.subplots()
+with row2_col2:
+    st.subheader("5. Age × Gender Rates")
+    fig4, ax4 = plt.subplots(figsize=(5, 4))
     age_gender_avg.plot(kind="bar", ax=ax4)
-    ax4.set_ylabel("Rate per 100,000")
-    ax4.set_title("Death & Injury Rates by Age & Gender")
-    st.pyplot(fig4)
+    ax4.set_ylabel("Rate per 100k")
+    st.pyplot(fig4, use_container_width=True)
 
-# ------------------------------------------
-# END OF APP
-# ------------------------------------------
-st.markdown("© 2025 | Road Safety Analytics | MSBA Project")
+# ---------------------------
+# FOOTER
+# ---------------------------
+st.markdown("---")
+st.markdown("© 2025 | Road Safety Analytics | MSBA Healthcare Analytics")
