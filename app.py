@@ -47,24 +47,26 @@ yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]]
 vehicle_counts = df["Vehicle_Type"].value_counts()
 age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
-# --------------------------
-# 5. 2x2 VISUALS
-# --------------------------
-figsize = (3, 2)
+# Smaller and consistent figure size
+figsize = (3.5, 2.5)
 
+# --------------------------
+# 5. 2x2 DASHBOARD
+# --------------------------
 col1, col2 = st.columns(2)
 
-# Chart 1
+# Chart 1: Gender-based Rates
 with col1:
     st.subheader("1. Avg Death & Injury Rates by Gender")
     fig1, ax1 = plt.subplots(figsize=figsize)
     gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"], legend=False)
     ax1.set_ylabel("Rate per 100k", fontsize=7)
     ax1.tick_params(axis='both', labelsize=6)
+    ax1.set_xlabel("")
     st.pyplot(fig1, use_container_width=True)
     st.caption("Legend: Death (navy), Injury (skyblue)")
 
-# Chart 2
+# Chart 2: Yearly Trends
 with col2:
     st.subheader("2. Yearly Trends in Death & Injury Rates")
     fig2, ax2 = plt.subplots(figsize=figsize)
@@ -78,19 +80,19 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Chart 3
+# Chart 3: Vehicle Types
 with col3:
     st.subheader("3. Vehicle Type Distribution")
     fig3, ax3 = plt.subplots(figsize=figsize)
     wedges, texts, autotexts = ax3.pie(
         vehicle_counts, labels=None, autopct='%1.1f%%', startangle=90,
-        colors=plt.cm.Set3.colors, textprops={'fontsize': 5}
+        colors=plt.cm.Set3.colors, textprops={'fontsize': 6}
     )
     ax3.axis('equal')
     ax3.legend(vehicle_counts.index, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=6, frameon=False)
     st.pyplot(fig3, use_container_width=True)
 
-# Chart 4
+# Chart 4: Age × Gender Rates
 with col4:
     st.subheader("4. Death & Injury Rates by Age × Gender")
     fig4, ax4 = plt.subplots(figsize=figsize)
