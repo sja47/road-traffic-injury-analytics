@@ -1,100 +1,77 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-# ---------------------------
-# PASSWORD PROTECTION
-# ---------------------------
-def check_password():
-    def password_entered():
-        if st.session_state["password"] == "msba":  # ← change this
-            st.session_state["authenticated"] = True
-        else:
-            st.error("❌ Wrong password")
-            st.session_state["authenticated"] = False
+# Page config
+st.set_page_config(layout="wide")
 
-    if "authenticated" not in st.session_state:
-        st.session_state["authenticated"] = False
+# --- Password protection ---
+st.markdown("<h2 style='text-align: center;'>🔐 Secure Access</h2>", unsafe_allow_html=True)
 
-    if not st.session_state["authenticated"]:
-        st.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
-        st.stop()
+password = st.text_input("Enter password to access the dashboard:", type="password")
 
-check_password()
-
-# ---------------------------
-# LOAD DATA FROM GITHUB
-# ---------------------------
-csv_url = "https://raw.githubusercontent.com/sja47/road-traffic-injury-analytics/main/road_traffic_injuries_sample.csv"
-
-try:
-    df = pd.read_csv(csv_url)
-except Exception as e:
-    st.error("❌ Failed to load data. Please check the CSV URL.")
+# Set your actual password here
+if password != "msba":
+    st.warning("🔒 Please enter the correct password to continue.")
     st.stop()
 
-# ---------------------------
-# HEADER + TITLE
-# ---------------------------
+# Dashboard title
 st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("---")
 
-# ---------------------------
-# PREPARE DATA
-# ---------------------------
-gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
-yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
-vehicle_counts = df["Vehicle_Type"].value_counts()
-age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
+# Load data from GitHub
+CSV_URL = "https://raw.githubusercontent.com/sja47/road-traffic-injury-analytics/main/road_traffic_injuries_sample.csv"
+try:
+    df = pd.read_csv(CSV_URL)
+except Exception as e:
+    st.error(f"❌ Failed to load data. Please check the CSV URL.\n\n{e}")
+    st.stop()
 
-# ---------------------------
-# 2x2 VISUALS
-# ---------------------------
+# Add vertical space before visuals
+st.markdown("### ")
+
+# Layout
 row1_col1, row1_col2 = st.columns(2)
+row2_col1, row2_col2 = st.columns(2)
 
-# Chart 1: Avg by Gender
+# Visual 1
 with row1_col1:
     st.subheader("1. Avg Death & Injury Rates by Gender")
+    gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean()
     fig1, ax1 = plt.subplots(figsize=(5, 4))
-    gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"])
+    gender_avg.plot(kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"], legend=False)
     ax1.set_ylabel("Rate per 100k")
-    ax1.legend().remove()
-    ax1.set_xlabel("")
+    ax1.set_xlabel("Gender")
     st.pyplot(fig1, use_container_width=True)
 
-# Chart 2: Yearly Trends
+# Visual 2
 with row1_col2:
     st.subheader("2. Yearly Trends in Death & Injury Rates")
+    yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
     fig2, ax2 = plt.subplots(figsize=(5, 4))
     ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='red', label="Death Rate")
     ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='blue', label="Injury Rate")
     ax2.set_ylabel("Rate per 100k")
-    ax2.legend(loc="upper right", frameon=False)
     ax2.set_xlabel("Year")
+    ax2.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False)
     st.pyplot(fig2, use_container_width=True)
 
-row2_col1, row2_col2 = st.columns(2)
-
-# Chart 3: Vehicle Types
+# Visual 3
 with row2_col1:
     st.subheader("3. Vehicle Type Distribution")
+    vehicle_counts = df["Vehicle_Type"].value_counts()
     fig3, ax3 = plt.subplots(figsize=(5, 4))
-    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, colors=plt.cm.Set3.colors)
-    ax3.axis('equal')
+    vehicle_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax3, colors=sns.color_palette("pastel"))
+    ax3.set_ylabel("")
     st.pyplot(fig3, use_container_width=True)
 
-# Chart 4: Age × Gender
+# Visual 4
 with row2_col2:
     st.subheader("4. Death & Injury Rates by Age × Gender")
+    age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
     fig4, ax4 = plt.subplots(figsize=(5, 4))
-    age_gender_avg.plot(kind="bar", ax=ax4, width=0.8)
+    age_gender_avg.plot(kind="bar", ax=ax4, width=0.8, color=["red", "green", "lightblue", "orange"])
     ax4.set_ylabel("Rate per 100k")
-    ax4.legend(loc="upper right", bbox_to_anchor=(1.2, 1), frameon=False)
     ax4.set_xlabel("Age Group")
+    ax4.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False)
     st.pyplot(fig4, use_container_width=True)
-
-# ---------------------------
-# FOOTER
-# ---------------------------
-st.markdown("---")
-st.markdown("<div style='text-align: center;'>© 2025 | Road Safety Analytics | MSBA Healthcare Analytics</div>", unsafe_allow_html=True)
