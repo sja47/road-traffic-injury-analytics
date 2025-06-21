@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Streamlit page config
 st.set_page_config(layout="wide")
 
 # --- Password Protection ---
@@ -24,26 +23,25 @@ except Exception as e:
     st.error(f"❌ Failed to load data. Please check the CSV URL.\n\n{e}")
     st.stop()
 
-# --- Visualization Layout ---
+# --- Layout Grid 2x2 ---
 row1_col1, row1_col2 = st.columns(2)
 row2_col1, row2_col2 = st.columns(2)
 
-# --- Visualization 1: Avg by Gender ---
+# --- 1. Avg by Gender ---
 with row1_col1:
     st.subheader("1. Avg Death & Injury Rates by Gender")
     gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean()
-    fig1, ax1 = plt.subplots(figsize=(4, 3))
+    fig1, ax1 = plt.subplots(figsize=(3.5, 2.5))
     gender_avg.plot(kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"], legend=False)
     ax1.set_ylabel("Rate per 100k")
     ax1.set_xlabel("Gender")
-    ax1.set_title("")
     st.pyplot(fig1, use_container_width=True)
 
-# --- Visualization 2: Trends ---
+# --- 2. Yearly Trends ---
 with row1_col2:
     st.subheader("2. Yearly Trends in Death & Injury Rates")
     yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
-    fig2, ax2 = plt.subplots(figsize=(4, 3))
+    fig2, ax2 = plt.subplots(figsize=(3.5, 2.5))
     ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='red', label="Death Rate")
     ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='blue', label="Injury Rate")
     ax2.set_ylabel("Rate per 100k")
@@ -51,21 +49,20 @@ with row1_col2:
     ax2.legend(loc="center left", bbox_to_anchor=(1, 0.5), frameon=False)
     st.pyplot(fig2, use_container_width=True)
 
-# --- Visualization 3: Vehicle Types ---
+# --- 3. Vehicle Types ---
 with row2_col1:
     st.subheader("3. Vehicle Type Distribution")
     vehicle_counts = df["Vehicle_Type"].value_counts()
-    fig3, ax3 = plt.subplots(figsize=(4, 3))
+    fig3, ax3 = plt.subplots(figsize=(3.5, 2.5))
     vehicle_counts.plot(kind="pie", autopct="%1.1f%%", ax=ax3, colors=sns.color_palette("pastel"))
     ax3.set_ylabel("")
-    ax3.set_title("")
     st.pyplot(fig3, use_container_width=True)
 
-# --- Visualization 4: Age × Gender ---
+# --- 4. Age × Gender ---
 with row2_col2:
     st.subheader("4. Death & Injury Rates by Age × Gender")
     age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
-    fig4, ax4 = plt.subplots(figsize=(4, 3))
+    fig4, ax4 = plt.subplots(figsize=(3.5, 2.5))
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.8, color=["red", "green", "skyblue", "orange"])
     ax4.set_ylabel("Rate per 100k")
     ax4.set_xlabel("Age Group")
