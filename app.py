@@ -39,13 +39,12 @@ yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]]
 vehicle_counts = df["Vehicle_Type"].value_counts()
 age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
-# ↓↓↓ Use smallest consistent plot size ↓↓↓
-figsize = (3, 2)
+# ↓↓↓ Smaller plot size ↓↓↓
+figsize = (2.2, 1.5)
 
-# 5. Visualization Grid (2x2) with tighter layout
+# 5. Visualization Grid
 col1, col2 = st.columns(2)
 
-# Chart 1: Gender-based Rates
 with col1:
     st.subheader("1. Avg Death & Injury Rates by Gender")
     fig1, ax1 = plt.subplots(figsize=figsize)
@@ -54,9 +53,8 @@ with col1:
     ax1.set_xlabel("")
     ax1.tick_params(labelsize=6)
     st.pyplot(fig1, use_container_width=True)
-    st.caption("Legend: Navy=Death, Skyblue=Injury")
+    st.caption("Legend: Navy = Death, Skyblue = Injury")
 
-# Chart 2: Yearly Trends
 with col2:
     st.subheader("2. Yearly Death & Injury Trends")
     fig2, ax2 = plt.subplots(figsize=figsize)
@@ -70,16 +68,14 @@ with col2:
 
 col3, col4 = st.columns(2)
 
-# Chart 3: Vehicle Types
 with col3:
     st.subheader("3. Vehicle Type Distribution")
     fig3, ax3 = plt.subplots(figsize=figsize)
-    wedges, texts, autotexts = ax3.pie(vehicle_counts, labels=None, autopct='%1.0f%%', startangle=90, colors=plt.cm.Pastel1.colors, textprops={'fontsize': 6})
+    wedges, texts, autotexts = ax3.pie(vehicle_counts, labels=None, autopct='%1.0f%%', startangle=90, colors=plt.cm.Set3.colors, textprops={'fontsize': 6})
     ax3.axis('equal')
     ax3.legend(vehicle_counts.index, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=6, frameon=False)
     st.pyplot(fig3, use_container_width=True)
 
-# Chart 4: Age × Gender
 with col4:
     st.subheader("4. Age Group × Gender Rates")
     fig4, ax4 = plt.subplots(figsize=figsize)
@@ -88,8 +84,8 @@ with col4:
     ax4.set_xlabel("Age Group", fontsize=6)
     ax4.tick_params(labelsize=6)
     st.pyplot(fig4, use_container_width=True)
-    st.caption("Legend: M=Male, F=Female, colors show injury/death")
+    st.caption("Legend: M = Male, F = Female (colors show Injury/Death)")
 
-# 6. Footer
+# Footer
 st.markdown("---")
 st.markdown("<div style='text-align: center;'>© 2025 | Road Safety Analytics | MSBA Healthcare Analytics</div>", unsafe_allow_html=True)
