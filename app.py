@@ -20,31 +20,30 @@ def check_password():
 
 check_password()
 
-# 2. Load CSV from GitHub
+# 2. Load CSV
 csv_url = "https://raw.githubusercontent.com/sja47/road-traffic-injury-analytics/main/road_traffic_injuries_sample.csv"
 try:
     df = pd.read_csv(csv_url)
 except Exception:
-    st.error("❌ Failed to load data. Please check the CSV URL.")
+    st.error("❌ Failed to load data.")
     st.stop()
 
-# 3. Page config
+# 3. Page Config
 st.set_page_config(layout="wide")
 st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
 st.markdown("---")
 
-# 4. Prepare data
+# 4. Data Preparation
 gender_avg = df.groupby("Gender")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 yearly_avg = df.groupby("Year")[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().reset_index()
 vehicle_counts = df["Vehicle_Type"].value_counts()
 age_gender_avg = df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
-# ↓↓↓ Smaller plot size ↓↓↓
-figsize = (2.2, 1.5)
+# 5. Plot size
+figsize = (2, 1.6)  # Equal and small to avoid scroll
 
-# 5. Visualization Grid
+# 6. First row
 col1, col2 = st.columns(2)
-
 with col1:
     st.subheader("1. Avg Death & Injury Rates by Gender")
     fig1, ax1 = plt.subplots(figsize=figsize)
@@ -63,15 +62,16 @@ with col2:
     ax2.set_ylabel("Rate per 100k", fontsize=6)
     ax2.set_xlabel("Year", fontsize=6)
     ax2.tick_params(labelsize=6)
-    ax2.legend(loc="center left", bbox_to_anchor=(1, 0.5), fontsize=6, frameon=False)
+    ax2.legend(loc="upper left", fontsize=6, frameon=False)
     st.pyplot(fig2, use_container_width=True)
 
+# 7. Second row
 col3, col4 = st.columns(2)
-
 with col3:
     st.subheader("3. Vehicle Type Distribution")
     fig3, ax3 = plt.subplots(figsize=figsize)
-    wedges, texts, autotexts = ax3.pie(vehicle_counts, labels=None, autopct='%1.0f%%', startangle=90, colors=plt.cm.Set3.colors, textprops={'fontsize': 6})
+    wedges, _, _ = ax3.pie(vehicle_counts, labels=None, autopct='%1.0f%%', startangle=90,
+                           colors=plt.cm.Set3.colors, textprops={'fontsize': 6})
     ax3.axis('equal')
     ax3.legend(vehicle_counts.index, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=6, frameon=False)
     st.pyplot(fig3, use_container_width=True)
@@ -86,6 +86,6 @@ with col4:
     st.pyplot(fig4, use_container_width=True)
     st.caption("Legend: M = Male, F = Female (colors show Injury/Death)")
 
-# Footer
+# 8. Footer
 st.markdown("---")
 st.markdown("<div style='text-align: center;'>© 2025 | Road Safety Analytics | MSBA Healthcare Analytics</div>", unsafe_allow_html=True)
