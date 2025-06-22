@@ -102,7 +102,7 @@ with col3:
 
 with col4:
     st.markdown("**4. Age × Gender Injury/Death Rates**")
-    fig4, ax4 = plt.subplots(figsize=(9.5, 9.0), dpi=120)
+    fig4, ax4 = plt.subplots(figsize=(10.5, 10.0), dpi=120)
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.6, color=["#E45756", "#F28E2B", "#4C78A8", "#76B7B2"])
     ax4.set_ylabel("Rate per 100k", fontsize=19)
     ax4.set_xlabel("Age Group", fontsize=19)
