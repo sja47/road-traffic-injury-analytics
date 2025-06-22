@@ -110,7 +110,7 @@ with col4:
     ax4.tick_params(axis='y', labelsize=15)
     handles, labels = ax4.get_legend_handles_labels()
     simplified_labels = [label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury") for label in labels]
-    ax4.legend(handles, simplified_labels, fontsize=15, loc="center left", bbox_to_anchor=(1, 0.5))
+    ax4.legend(handles, simplified_labels, fontsize=14, loc="center left", bbox_to_anchor=(1, 0.5))
     fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
 
