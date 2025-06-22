@@ -34,25 +34,23 @@ except Exception:
     st.stop()
 
 # ---------------------------
-# DASHBOARD HEADER
+# SIDEBAR FILTERS
 # ---------------------------
-st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("---")
-
-# ---------------------------
-# FILTERS
-# ---------------------------
-col_filter1, col_filter2 = st.columns(2)
-with col_filter1:
-    selected_gender = st.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
-with col_filter2:
-    selected_year = st.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
+st.sidebar.markdown("### 🔎 Filter Options")
+selected_gender = st.sidebar.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
+selected_year = st.sidebar.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
 
 filtered_df = df.copy()
 if selected_gender != "All":
     filtered_df = filtered_df[filtered_df["Gender"] == selected_gender]
 if selected_year != "All":
     filtered_df = filtered_df[filtered_df["Year"] == int(selected_year)]
+
+# ---------------------------
+# DASHBOARD HEADER
+# ---------------------------
+st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
 # ---------------------------
 # PREPARE DATA
