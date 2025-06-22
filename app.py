@@ -116,7 +116,7 @@ with col4:
         label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury")
         for label in labels
     ]
-    ax4.legend(handles, simplified_labels, fontsize=10, loc="center left", bbox_to_anchor=(3, 2.5))
+    ax4.legend(handles, simplified_labels, fontsize=10, loc="center left", bbox_to_anchor=(1, 0.5))
     fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
 
