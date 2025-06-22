@@ -103,15 +103,25 @@ with col3:
 
 with col4:
     st.markdown("**4. Age × Gender Injury/Death Rates**")
-    fig4, ax4 = plt.subplots(figsize=(6.0, 5.5), dpi=120)
+    fig4, ax4 = plt.subplots(figsize=(5.0, 2.0), dpi=120)
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.6)
+
     ax4.set_ylabel("Rate per 100k", fontsize=6)
     ax4.set_xlabel("Age Group", fontsize=6)
     ax4.tick_params(axis='x', labelsize=5, rotation=30)
     ax4.tick_params(axis='y', labelsize=5)
-    ax4.legend(fontsize=5, loc="center left", bbox_to_anchor=(1, 0.5))  # ✅ updated position
-    fig4.tight_layout(pad=0.5)
+
+    # Make legend clearer
+    handles, labels = ax4.get_legend_handles_labels()
+    new_labels = [
+        label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury")
+        for label in labels
+    ]
+    ax4.legend(handles, new_labels, fontsize=6, loc="center left", bbox_to_anchor=(1, 0.5))
+
+    fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
+
 
 # ---------------------------
 # FOOTER
