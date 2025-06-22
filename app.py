@@ -106,8 +106,8 @@ with col4:
     fig4, ax4 = plt.subplots(figsize=(6.5, 6.0), dpi=120)
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.6)
 
-    ax4.set_ylabel("Rate per 100k", fontsize=25)
-    ax4.set_xlabel("Age Group", fontsize=25)
+    ax4.set_ylabel("Rate per 100k", fontsize=40)
+    ax4.set_xlabel("Age Group", fontsize=40)
     ax4.tick_params(axis='x', labelsize=20, rotation=30)
     ax4.tick_params(axis='y', labelsize=20)
 
