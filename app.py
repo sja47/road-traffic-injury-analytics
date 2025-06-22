@@ -17,7 +17,7 @@ def check_password():
         st.session_state["authenticated"] = False
 
     if not st.session_state["authenticated"]:
-        st.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
+        st.sidebar.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
         st.stop()
 
 check_password()
@@ -34,25 +34,23 @@ except Exception:
     st.stop()
 
 # ---------------------------
-# DASHBOARD HEADER
+# SIDEBAR FILTERS
 # ---------------------------
-st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("---")
-
-# ---------------------------
-# FILTERS
-# ---------------------------
-col_filter1, col_filter2 = st.columns(2)
-with col_filter1:
-    selected_gender = st.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
-with col_filter2:
-    selected_year = st.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
+st.sidebar.header("🔍 Filters")
+selected_gender = st.sidebar.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
+selected_year = st.sidebar.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
 
 filtered_df = df.copy()
 if selected_gender != "All":
     filtered_df = filtered_df[filtered_df["Gender"] == selected_gender]
 if selected_year != "All":
     filtered_df = filtered_df[filtered_df["Year"] == int(selected_year)]
+
+# ---------------------------
+# HEADER
+# ---------------------------
+st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
 # ---------------------------
 # PREPARE DATA
@@ -63,7 +61,7 @@ vehicle_counts = filtered_df["Vehicle_Type"].value_counts()
 age_gender_avg = filtered_df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
 # ---------------------------
-# VISUALS (2x2 Dashboard)
+# VISUALS (2x2 Layout)
 # ---------------------------
 col1, col2 = st.columns(2)
 
@@ -119,7 +117,6 @@ with col4:
     ax4.legend(handles, simplified_labels, fontsize=10, loc="center left", bbox_to_anchor=(1, 0.5))
     fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
-
 
 # ---------------------------
 # FOOTER
