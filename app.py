@@ -3,15 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # ---------------------------
-# PAGE CONFIGURATION
-# ---------------------------
-st.set_page_config(
-    page_title="Road Traffic Injury Analytics",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# ---------------------------
 # PASSWORD PROTECTION
 # ---------------------------
 def check_password():
@@ -26,7 +17,7 @@ def check_password():
         st.session_state["authenticated"] = False
 
     if not st.session_state["authenticated"]:
-        st.sidebar.text_input("🔐 Enter password to access:", type="password", on_change=password_entered, key="password")
+        st.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
         st.stop()
 
 check_password()
@@ -76,51 +67,51 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("**1. Avg Death & Injury by Gender**")
-    fig1, ax1 = plt.subplots(figsize=(3.2, 3.0), dpi=120)
-    gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["#1f77b4", "#ff7f0e"])
-    ax1.set_ylabel("Rate per 100k", fontsize=10)
+    fig1, ax1 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
+    gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["#4C78A8", "#F58518"])  # Blue & Orange
+    ax1.set_ylabel("Rate per 100k", fontsize=8)
     ax1.set_xlabel("")
-    ax1.tick_params(axis='x', labelsize=9)
-    ax1.tick_params(axis='y', labelsize=9)
-    ax1.legend(fontsize=9, loc="center left", bbox_to_anchor=(1, 0.5))
-    fig1.tight_layout(pad=0.8)
+    ax1.tick_params(axis='x', labelsize=7)
+    ax1.tick_params(axis='y', labelsize=7)
+    ax1.legend(fontsize=7, loc="center left", bbox_to_anchor=(1, 0.5))
+    fig1.tight_layout(pad=0.5)
     st.pyplot(fig1)
 
 with col2:
     st.markdown("**2. Yearly Death & Injury Trends**")
-    fig2, ax2 = plt.subplots(figsize=(3.2, 3.0), dpi=120)
-    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='#d62728', label="Death")
-    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='#1f77b4', label="Injury")
-    ax2.set_ylabel("Rate per 100k", fontsize=10)
-    ax2.set_xlabel("Year", fontsize=10)
-    ax2.tick_params(axis='x', labelsize=9)
-    ax2.tick_params(axis='y', labelsize=9)
-    ax2.legend(fontsize=9, loc="center left", bbox_to_anchor=(1, 0.5))
-    fig2.tight_layout(pad=0.8)
+    fig2, ax2 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
+    ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='#E45756', label="Death")   # Coral Red
+    ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='#4C78A8', label="Injury") # Blue
+    ax2.set_ylabel("Rate per 100k", fontsize=8)
+    ax2.set_xlabel("Year", fontsize=8)
+    ax2.tick_params(axis='x', labelsize=7)
+    ax2.tick_params(axis='y', labelsize=7)
+    ax2.legend(fontsize=7, loc="center left", bbox_to_anchor=(1, 0.5))
+    fig2.tight_layout(pad=0.5)
     st.pyplot(fig2)
 
 col3, col4 = st.columns(2)
 
 with col3:
     st.markdown("**3. Vehicle Type Distribution**")
-    fig3, ax3 = plt.subplots(figsize=(3.2, 3.0), dpi=120)
-    colors = plt.get_cmap("tab20").colors
-    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 8}, colors=colors)
+    fig3, ax3 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
+    colors = ["#72B7B2", "#FF9DA6", "#59A14F", "#EDC949", "#9C755F"]  # Custom distinct color set
+    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 7}, colors=colors)
     ax3.axis('equal')
     st.pyplot(fig3)
 
 with col4:
     st.markdown("**4. Age × Gender Injury/Death Rates**")
     fig4, ax4 = plt.subplots(figsize=(6.5, 6.0), dpi=120)
-    age_gender_avg.plot(kind="bar", ax=ax4, width=0.6, color=["#d62728", "#ff9896", "#1f77b4", "#aec7e8"])
-    ax4.set_ylabel("Rate per 100k", fontsize=14)
-    ax4.set_xlabel("Age Group", fontsize=14)
-    ax4.tick_params(axis='x', labelsize=13, rotation=30)
-    ax4.tick_params(axis='y', labelsize=13)
+    age_gender_avg.plot(kind="bar", ax=ax4, width=0.6, color=["#E45756", "#F28E2B", "#4C78A8", "#76B7B2"])
+    ax4.set_ylabel("Rate per 100k", fontsize=15)
+    ax4.set_xlabel("Age Group", fontsize=15)
+    ax4.tick_params(axis='x', labelsize=15, rotation=30)
+    ax4.tick_params(axis='y', labelsize=15)
     handles, labels = ax4.get_legend_handles_labels()
     simplified_labels = [label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury") for label in labels]
     ax4.legend(handles, simplified_labels, fontsize=10, loc="center left", bbox_to_anchor=(1, 0.5))
-    fig4.tight_layout(pad=1.0)
+    fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
 
 # ---------------------------
