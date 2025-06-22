@@ -1,6 +1,11 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+
+# ---------------------------
+# PAGE CONFIG
+# ---------------------------
+st.set_page_config(layout="wide")
 
 # ---------------------------
 # PASSWORD PROTECTION
@@ -17,7 +22,7 @@ def check_password():
         st.session_state["authenticated"] = False
 
     if not st.session_state["authenticated"]:
-        st.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
+        st.sidebar.text_input("🔐 Enter password to access the dashboard:", type="password", on_change=password_entered, key="password")
         st.stop()
 
 check_password()
@@ -34,25 +39,23 @@ except Exception:
     st.stop()
 
 # ---------------------------
-# DASHBOARD HEADER
+# SIDEBAR FILTERS
 # ---------------------------
-st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
-st.markdown("---")
-
-# ---------------------------
-# FILTERS
-# ---------------------------
-col_filter1, col_filter2 = st.columns(2)
-with col_filter1:
-    selected_gender = st.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
-with col_filter2:
-    selected_year = st.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
+st.sidebar.header("🔍 Filters")
+selected_gender = st.sidebar.selectbox("Select Gender", options=["All"] + sorted(df["Gender"].dropna().unique().tolist()))
+selected_year = st.sidebar.selectbox("Select Year", options=["All"] + sorted(df["Year"].dropna().unique().tolist()))
 
 filtered_df = df.copy()
 if selected_gender != "All":
     filtered_df = filtered_df[filtered_df["Gender"] == selected_gender]
 if selected_year != "All":
     filtered_df = filtered_df[filtered_df["Year"] == int(selected_year)]
+
+# ---------------------------
+# DASHBOARD HEADER
+# ---------------------------
+st.markdown("<h1 style='text-align: center;'>🚦 Road Traffic Injury Analytics Dashboard</h1>", unsafe_allow_html=True)
+st.markdown("---")
 
 # ---------------------------
 # PREPARE DATA
@@ -63,7 +66,7 @@ vehicle_counts = filtered_df["Vehicle_Type"].value_counts()
 age_gender_avg = filtered_df.groupby(["Age_Group", "Gender"])[["Death_Rate_per_100k", "Injury_Rate_per_100k"]].mean().unstack()
 
 # ---------------------------
-# VISUALS (2x2 Dashboard)
+# VISUALS (2x2)
 # ---------------------------
 col1, col2 = st.columns(2)
 
@@ -103,13 +106,12 @@ with col3:
 
 with col4:
     st.markdown("**4. Age × Gender Injury/Death Rates**")
-    fig4, ax4 = plt.subplots(figsize=(6.5, 6.0), dpi=120)
+    fig4, ax4 = plt.subplots(figsize=(6.0, 5.5), dpi=120)
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.6)
-
-    ax4.set_ylabel("Rate per 100k", fontsize=20)
-    ax4.set_xlabel("Age Group", fontsize=20)
-    ax4.tick_params(axis='x', labelsize=20, rotation=30)
-    ax4.tick_params(axis='y', labelsize=20)
+    ax4.set_ylabel("Rate per 100k", fontsize=14)
+    ax4.set_xlabel("Age Group", fontsize=14)
+    ax4.tick_params(axis='x', labelsize=12, rotation=30)
+    ax4.tick_params(axis='y', labelsize=12)
 
     handles, labels = ax4.get_legend_handles_labels()
     simplified_labels = [
@@ -119,7 +121,6 @@ with col4:
     ax4.legend(handles, simplified_labels, fontsize=10, loc="center left", bbox_to_anchor=(1, 0.5))
     fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
-
 
 # ---------------------------
 # FOOTER
