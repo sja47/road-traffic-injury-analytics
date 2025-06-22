@@ -71,11 +71,11 @@ with col1:
     st.markdown("**1. Avg Death & Injury by Gender**")
     fig1, ax1 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
     gender_avg.plot(x="Gender", kind="bar", stacked=True, ax=ax1, color=["skyblue", "navy"])
-    ax1.set_ylabel("Rate per 100k", fontsize=6)
+    ax1.set_ylabel("Rate per 100k", fontsize=8)
     ax1.set_xlabel("")
-    ax1.tick_params(axis='x', labelsize=5)
-    ax1.tick_params(axis='y', labelsize=5)
-    ax1.legend(fontsize=6, loc="center left", bbox_to_anchor=(1, 0.5))
+    ax1.tick_params(axis='x', labelsize=7)
+    ax1.tick_params(axis='y', labelsize=7)
+    ax1.legend(fontsize=7, loc="center left", bbox_to_anchor=(1, 0.5))
     fig1.tight_layout(pad=0.5)
     st.pyplot(fig1)
 
@@ -84,11 +84,11 @@ with col2:
     fig2, ax2 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
     ax2.plot(yearly_avg["Year"], yearly_avg["Death_Rate_per_100k"], marker='o', color='red', label="Death")
     ax2.plot(yearly_avg["Year"], yearly_avg["Injury_Rate_per_100k"], marker='o', color='blue', label="Injury")
-    ax2.set_ylabel("Rate per 100k", fontsize=6)
-    ax2.set_xlabel("Year", fontsize=6)
-    ax2.tick_params(axis='x', labelsize=5)
-    ax2.tick_params(axis='y', labelsize=5)
-    ax2.legend(fontsize=6, loc="center left", bbox_to_anchor=(1, 0.5))
+    ax2.set_ylabel("Rate per 100k", fontsize=8)
+    ax2.set_xlabel("Year", fontsize=8)
+    ax2.tick_params(axis='x', labelsize=7)
+    ax2.tick_params(axis='y', labelsize=7)
+    ax2.legend(fontsize=7, loc="center left", bbox_to_anchor=(1, 0.5))
     fig2.tight_layout(pad=0.5)
     st.pyplot(fig2)
 
@@ -97,7 +97,7 @@ col3, col4 = st.columns(2)
 with col3:
     st.markdown("**3. Vehicle Type Distribution**")
     fig3, ax3 = plt.subplots(figsize=(3.0, 2.8), dpi=120)
-    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 5})
+    ax3.pie(vehicle_counts, labels=vehicle_counts.index, autopct='%1.1f%%', startangle=90, textprops={'fontsize': 7})
     ax3.axis('equal')
     st.pyplot(fig3)
 
@@ -105,19 +105,13 @@ with col4:
     st.markdown("**4. Age × Gender Injury/Death Rates**")
     fig4, ax4 = plt.subplots(figsize=(6.0, 5.5), dpi=120)
     age_gender_avg.plot(kind="bar", ax=ax4, width=0.6)
-
-    ax4.set_ylabel("Rate per 100k", fontsize=6)
-    ax4.set_xlabel("Age Group", fontsize=6)
-    ax4.tick_params(axis='x', labelsize=5, rotation=30)
-    ax4.tick_params(axis='y', labelsize=5)
-
-    # Clarify labels in legend
+    ax4.set_ylabel("Rate per 100k", fontsize=8)
+    ax4.set_xlabel("Age Group", fontsize=8)
+    ax4.tick_params(axis='x', labelsize=7, rotation=30)
+    ax4.tick_params(axis='y', labelsize=7)
     handles, labels = ax4.get_legend_handles_labels()
-    simplified_labels = [
-        label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury")
-        for label in labels
-    ]
-    ax4.legend(handles, simplified_labels, fontsize=6, loc="center left", bbox_to_anchor=(1, 0.5))
+    simplified_labels = [label.replace("Death_Rate_per_100k", "Death").replace("Injury_Rate_per_100k", "Injury") for label in labels]
+    ax4.legend(handles, simplified_labels, fontsize=7, loc="center left", bbox_to_anchor=(1, 0.5))
     fig4.tight_layout(pad=0.8)
     st.pyplot(fig4)
 
